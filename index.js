@@ -6,7 +6,7 @@ This class is an addon
 */
 class Addon {
   constructor(desc, activate = (addHTML, addCSS)=>{}, disable = ()=>{}) {
-    this.activateFn = activate;
+    this.enableFn = activate;
     this.disableFn = disable;
     this.desc = desc;
 
@@ -29,7 +29,7 @@ class Addon {
 
   enable() {
     let temp = this;
-    this.activateFn(
+    this.enableFn(
       (text)=>{let elem = createElemFromText(text); temp.addedHTML.push(elem); return elem;}, 
       (text)=>{let elem = createStyles(text); temp.addedCSS.push(elem); return elem;}
     );
@@ -71,7 +71,7 @@ class Addon {
 All custom addons
 */
 let addons = [];
-let rgbAddon = new Addon(
+let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
   {
     name: "Party Time",
     desc: "Makes the page gamer",
@@ -157,16 +157,35 @@ let mainAddon = new Addon({
     box-sizing: border-box;
     font-family: 'Lexend', sans-serif;
     color: white;
+    font-size: 1rem;
   }
 
   .unimarklet.addon-grid {
     width: 90%;
     margin: auto;
-    background: red;
-  }
-
-  .unimarklet.addon-item {
     
+    border: 1px solid red;
+  }
+  .unimarklet.grid-item {
+    display: grid;
+    gap: 0 0.5rem;
+    padding: 0.5rem;
+    grid-template-columns: 1rem auto;
+  }
+  .unimarklet.grid-toggle {
+    width: 1rem;
+    height: 1rem;
+    background: none;
+    border: 1px solid gray;
+    place-self: center;
+  }
+  .unimarklet.grid-desc {
+    grid-column-start: 1;
+    grid-column-end: 3;
+    color: rgb(255 255 255 / 0.7);
+  }
+  .unimarklet.grid-toggle.active {
+    background: rgb(0 255 0 / 0.2);
   }
 
   .unimarklet.delete {
@@ -203,14 +222,18 @@ let mainAddon = new Addon({
 
     let addonHTML = `
     <div class="unimarklet grid-item">
-      <button class="unimarklet grid-toggle${enabledClass}">X</button>
+      <button class="unimarklet grid-toggle${enabledClass}"> </button>
       <div class="unimarklet grid-name">${name}</div>
       <div class="unimarklet grid-desc">${desc}</div>
     </div>
     `;
     addonHTML = createElemFromText(addonHTML, grid);
 
-
+    let toggle = addonHTML.getElementsByClassName("grid-toggle")[0];
+    toggle.addEventListener("click", e => {
+      addon.toggle();
+      toggle.classList.toggle("active", addon.enabled);
+    });
   }
 }, ()=>{
 
