@@ -102,10 +102,44 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
   () => {
     clearInterval(rgbAddon.interval);
   }
-)
+);
 addons.push(rgbAddon);
 
+let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
+  {
+    name: "Subway Surfers",
+    desc: "Creates a hidden iframe with Subway Surfers, press § to show",
+    allowed: "*",
+  },
+  (addHTML, addCSS) => {
+    let allHTML = `
+    <iframe class="subway-surfers" src="https://subway-surfer-monaco.nugeshinia.repl.co/"></iframe>
+    `;
+    let allCSS = `
+    .subway-surfers {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
+    }
+    `;
+    allHTML = addHTML(allHTML);
+    addCSS(allCSS);
+    
+    window.subwaySurfersHandler = e => {
+      if (e.key == "§") {
+        allHTML.requestFullscreen();
+      }
+    }
 
+    document.addEventListener("keydown", window.subwaySurfersHandler);
+  },
+  () => {
+    document.removeEventListener("keydown", window.subwaySurfersHandler);
+  }
+);
+addons.push(subwaySurfersAddon);
 
 
 
@@ -163,14 +197,18 @@ let mainAddon = new Addon({
   .unimarklet.addon-grid {
     width: 90%;
     margin: auto;
-    
-    border: 1px solid red;
+    margin-top: 0.5rem;
   }
   .unimarklet.grid-item {
     display: grid;
     gap: 0 0.5rem;
     padding: 0.5rem;
     grid-template-columns: 1rem auto;
+
+    border-top: 1px dotted gray;
+  }
+  .unimarklet.grid-item:nth-child(1) {
+    border-top: none;
   }
   .unimarklet.grid-toggle {
     width: 1rem;
@@ -230,7 +268,7 @@ let mainAddon = new Addon({
     addonHTML = createElemFromText(addonHTML, grid);
 
     let toggle = addonHTML.getElementsByClassName("grid-toggle")[0];
-    toggle.addEventListener("click", e => {
+    addonHTML.addEventListener("click", e => {
       addon.toggle();
       toggle.classList.toggle("active", addon.enabled);
     });
