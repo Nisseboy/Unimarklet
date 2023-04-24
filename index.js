@@ -194,17 +194,16 @@ addons.push(editAddon);
 let fullscreenAddon = window.enabledAddons["Fullscreen Pro"] || new Addon(
   {
     name: "Fullscreen Pro",
-    desc: "Puts the page in a professional fullscreen mode, Escape to exit.",
+    desc: "Puts the page in a professional fullscreen mode, Escape to exit. This is not a toggle.",
     allowed: ["*"],
     permanent: false,
   },
   (addHTML, addCSS) => {
     document.body.requestFullscreen({navigationUI: "hide"});
-    fullscreenAddon.interval = setInterval(()=>{if (!document.fullscreen) fullscreenAddon.disable()}, 20);
+    fullscreenAddon.disable();
   },
   () => {
-    clearInterval(fullscreenAddon.interval);
-    if (document.fullscreen) document.exitFullscreen();
+    
   }
 );
 addons.push(fullscreenAddon);
