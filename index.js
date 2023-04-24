@@ -172,6 +172,25 @@ let fixSchoolsoftAddon = window.enabledAddons["Fix Schoolsoft"] || new Addon(
 );
 addons.push(fixSchoolsoftAddon);
 
+let editAddon = window.enabledAddons["Edit Anything"] || new Addon(
+  {
+    name: "Edit Anything",
+    desc: "Makes everything on the page editable",
+    allowed: ["*"],
+    permanent: false,
+  },
+  (addHTML, addCSS) => {
+    editAddon.oldSpellCheck = document.body.spellcheck;
+    document.body.contentEditable = true;
+    document.body.spellcheck = false;
+  },
+  () => {
+    document.body.contentEditable = false;
+    document.body.spellcheck = editAddon.oldSpellCheck;
+  }
+);
+addons.push(editAddon);
+
 
 
 
