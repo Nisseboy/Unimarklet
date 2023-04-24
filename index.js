@@ -75,7 +75,7 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
   {
     name: "Party Time",
     desc: "Makes the page gamer",
-    allowed: "*"
+    allowed: ["*"]
   },
   (addHTML, addCSS) => {
     let allHTML = addHTML(`
@@ -109,7 +109,7 @@ let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
   {
     name: "Subway Surfers",
     desc: "Creates a hidden iframe with Subway Surfers, press § to show",
-    allowed: "*",
+    allowed: ["*"],
   },
   (addHTML, addCSS) => {
     let allHTML = `
@@ -162,7 +162,7 @@ The main addon
 let mainAddon = new Addon({
   name: "Main Addon",
   desc: "This addon manages all the other addons",
-  allowed: "*",
+  allowed: ["*"],
 },(addHTML, addCSS)=>{
   let mainHTML = `
   <div class="unimarklet main">
