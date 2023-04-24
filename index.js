@@ -341,6 +341,7 @@ let mainAddon = new Addon({
       addon.toggle();
       toggle.classList.toggle("active", addon.enabled);
     });
+    setInterval(()=>{toggle.classList.toggle("active", addon.enabled)}, 100);
   }
 }, ()=>{
 
