@@ -109,7 +109,7 @@ addons.push(rgbAddon);
 let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
   {
     name: "Subway Surfers",
-    desc: "Creates a hidden iframe with Subway Surfers, press § to show",
+    desc: "Creates a hidden iframe with Subway Surfers, press § to show.",
     allowed: ["*"],
     permanent: false,
   },
@@ -146,7 +146,7 @@ addons.push(subwaySurfersAddon);
 let fixSchoolsoftAddon = window.enabledAddons["Fix Schoolsoft"] || new Addon(
   {
     name: "Fix Schoolsoft",
-    desc: "Makes schoolsoft look a bit more like the old version",
+    desc: "Makes schoolsoft look a bit more like the old version.",
     allowed: ["schoolsoft.se"],
     permanent: false,
   },
@@ -175,7 +175,7 @@ addons.push(fixSchoolsoftAddon);
 let editAddon = window.enabledAddons["Edit Anything"] || new Addon(
   {
     name: "Edit Anything",
-    desc: "Makes everything on the page editable",
+    desc: "Makes everything on the page editable.",
     allowed: ["*"],
     permanent: false,
   },
@@ -191,6 +191,21 @@ let editAddon = window.enabledAddons["Edit Anything"] || new Addon(
 );
 addons.push(editAddon);
 
+let fullscreenAddon = window.enabledAddons["Fullscreen Pro"] || new Addon(
+  {
+    name: "Fullscreen Pro",
+    desc: "Puts the page in a professional fullscreen mode, Escape to exit.",
+    allowed: ["*"],
+    permanent: false,
+  },
+  (addHTML, addCSS) => {
+    document.body.requestFullscreen({navigationUI: "hide"});
+  },
+  () => {
+    
+  }
+);
+addons.push(fullscreenAddon);
 
 
 
