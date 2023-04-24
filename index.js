@@ -159,7 +159,7 @@ let fixSchoolsoftAddon = window.enabledAddons["Fix Schoolsoft"] || new Addon(
       .MuiTypography-root {
         font-size: 0.7rem !important;
       }
-      MuiListItemButton-root {
+      .MuiListItemButton-root {
         padding: 0 !important;
         border-bottom: 1px dotted gray !important;
       }
