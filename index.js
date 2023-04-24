@@ -186,7 +186,9 @@ let mainAddon = new Addon({
 
     background: hsl(240, 2%, 12%);
     
-    z-index: 1000000;
+    z-index: 9999;
+    left: 50%;
+    translate: -50%;
   }
 
   .unimarklet {
