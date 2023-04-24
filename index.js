@@ -208,6 +208,30 @@ let fullscreenAddon = window.enabledAddons["Fullscreen Pro"] || new Addon(
 );
 addons.push(fullscreenAddon);
 
+let reverseTextAddon = window.enabledAddons["Reverse Text"] || new Addon(
+  {
+    name: "Reverse Text",
+    desc: "Reverses all the words on the page",
+    allowed: "*",
+    permanent: false,
+  },
+  (addHTML, addCSS) => {
+    reverseTextAddon.elems = document.querySelectorAll("*");
+    for (let i = 0; i < reverseTextAddon.elems.length; i++) {
+      let elem = reverseTextAddon.elems[i];
+      if (elem.innerText && elem.childElementCount == 0)
+      elem.innerText = elem.innerText.split("").reverse().join("");
+    }
+  },
+  () => {
+    for (let i = 0; i < reverseTextAddon.elems.length; i++) {
+      let elem = reverseTextAddon.elems[i];
+      if (elem.innerText && elem.childElementCount == 0)
+      elem.innerText = elem.innerText.split("").reverse().join("");
+    }
+  }
+);
+addons.push(reverseTextAddon);
 
 
 
