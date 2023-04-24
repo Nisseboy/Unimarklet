@@ -202,7 +202,7 @@ let fullscreenAddon = window.enabledAddons["Fullscreen Pro"] || new Addon(
     document.body.requestFullscreen({navigationUI: "hide"});
   },
   () => {
-    document.body.exitFullscreen();
+    if (document.fullscreen) document.exitFullscreen();
   }
 );
 addons.push(fullscreenAddon);
