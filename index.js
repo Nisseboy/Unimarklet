@@ -75,7 +75,8 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
   {
     name: "Party Time",
     desc: "Makes the page gamer",
-    allowed: ["*"]
+    allowed: ["*"],
+    permanent: false,
   },
   (addHTML, addCSS) => {
     let allHTML = addHTML(`
@@ -110,6 +111,7 @@ let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
     name: "Subway Surfers",
     desc: "Creates a hidden iframe with Subway Surfers, press § to show",
     allowed: ["*"],
+    permanent: false,
   },
   (addHTML, addCSS) => {
     let allHTML = `
@@ -141,7 +143,34 @@ let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
 );
 addons.push(subwaySurfersAddon);
 
+let fixSchoolsoftAddon = window.enabledAddons["Fix Schoolsoft"] || new Addon(
+  {
+    name: "Fix Schoolsoft",
+    desc: "Makes schoolsoft look a bit more like the old version",
+    allowed: ["schoolsoft.se"],
+    permanent: false,
+  },
+  (addHTML, addCSS) => {
+    let allCSS = `
+      .MuiDrawer-paper,
+      .student-sidebar-root {
+        width: 12rem !important;
+      }
+      .MuiTypography-root {
+        font-size: 0.7rem !important;
+      }
+      MuiListItemButton-root {
+        padding: 0 !important;
+        border-bottom: 1px dotted gray !important;
+      }
+    `;
+    addCSS(allCSS);
+  },
+  () => {
 
+  }
+);
+addons.push(fixSchoolsoftAddon);
 
 
 
@@ -163,6 +192,7 @@ let mainAddon = new Addon({
   name: "Main Addon",
   desc: "This addon manages all the other addons",
   allowed: ["*"],
+  permanent: false,
 },(addHTML, addCSS)=>{
   let mainHTML = `
   <div class="unimarklet main">
