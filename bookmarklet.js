@@ -1,2 +1,2 @@
-res = await fetch('https://raw.githubusercontent.com/ProjectSakura/OTA/10/changelog/changelog_beryllium.txt').then(a=>a.text());
-console.log(res);
+javascript:res = await fetch('https://raw.githubusercontent.com/Nisseboy/Unimarklet/master/index.js').then(a=>a.text());
+eval(res);
