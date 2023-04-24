@@ -200,8 +200,10 @@ let fullscreenAddon = window.enabledAddons["Fullscreen Pro"] || new Addon(
   },
   (addHTML, addCSS) => {
     document.body.requestFullscreen({navigationUI: "hide"});
+    fullscreenAddon.interval = setInterval(()=>{if (!document.fullscreen) fullscreenAddon.disable()}, 20);
   },
   () => {
+    clearInterval(fullscreenAddon.interval);
     if (document.fullscreen) document.exitFullscreen();
   }
 );
