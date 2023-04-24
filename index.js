@@ -185,6 +185,8 @@ let mainAddon = new Addon({
     border-top: none;
 
     background: hsl(240, 2%, 12%);
+    
+    z-index: 1000000;
   }
 
   .unimarklet {
