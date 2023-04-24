@@ -305,7 +305,12 @@ function createStyles(text) {
 Takes an allowed element ("*", "google.com") and returns true if the addon should be available
 */
 function isAllowed(criteria) {
-  return true;
+  for (let i = 0; i < criteria.length; i++) {
+    if (document.location.href.includes(criteria[i]) || criteria[i] == "*") {
+      return true; 
+    }
+  }
+  return false;
 }
 
 
