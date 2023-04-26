@@ -106,6 +106,14 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
 );
 addons.push(rgbAddon);
 
+let gamesMenu = {
+  desc: {
+    name: "Games",
+    desc: "Collection of games",
+    allowed: ["*"],
+  },
+  addons: [],
+};
 let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
   {
     name: "Subway Surfers",
@@ -141,7 +149,8 @@ let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
     document.removeEventListener("keydown", window.subwaySurfersHandler);
   }
 );
-addons.push(subwaySurfersAddon);
+gamesMenu.addons.push(subwaySurfersAddon);
+addons.push(gamesMenu);
 
 let fixSchoolsoftAddon = window.enabledAddons["Fix Schoolsoft"] || new Addon(
   {
@@ -253,8 +262,12 @@ let mainAddon = new Addon({
   allowed: ["*"],
   permanent: false,
 },(addHTML, addCSS)=>{
+  if (!mainAddon.addonPath) mainAddon.addonPath = [];
+
+  let returnText = (mainAddon.addonPath.length > 0)?`<button class="unimarklet return"><</button>`:"";
   let mainHTML = `
   <div class="unimarklet main">
+    ${returnText}
     <div class="unimarklet addon-grid"></div>
     <button class="unimarklet delete">X</button>
   </div>
@@ -265,7 +278,6 @@ let mainAddon = new Addon({
   .unimarklet.main {
 
     width: 50rem;
-    min-height: 10rem;
     position: fixed;
     top: 0;
 
@@ -300,6 +312,8 @@ let mainAddon = new Addon({
     grid-template-columns: 1rem auto;
 
     border-top: 1px dotted gray;
+
+    position: relative;
   }
   .unimarklet.grid-item:nth-child(1) {
     border-top: none;
@@ -318,6 +332,19 @@ let mainAddon = new Addon({
   }
   .unimarklet.grid-toggle.active {
     background: rgb(0 255 0 / 0.2);
+  }
+  .unimarklet.grid-enter {
+    padding: 0;
+    background: none;
+    display: grid;
+    border: none;
+  }
+
+  .unimarklet.return {
+    position: absolute;
+    background: none;
+    cursor: pointer;
+    border: none;
   }
 
   .unimarklet.delete {
@@ -340,33 +367,25 @@ let mainAddon = new Addon({
   mainHTML.getElementsByClassName("delete")[0].addEventListener("click", e => {
     mainAddon.disable();
   });
+  mainHTML.getElementsByClassName("return")[0]?.addEventListener("click", e => {
+    mainAddon.addonPath.splice(-1, 1);
+    mainAddon.disable(); 
+    mainAddon.enable();
+  });
+
+  let tempAddons = addons;
+  
+  for (let i = 0; i < mainAddon.addonPath.length; i++) {
+    let path = mainAddon.addonPath[i];
+    tempAddons = tempAddons[path].addons;
+  }
+
+  console.log(tempAddons);
 
   let grid = mainHTML.getElementsByClassName("addon-grid")[0];
-  for (let i in addons) {
-    let addon = addons[i];
-    let name = addon.desc.name;
-    let desc = addon.desc.desc;
-    let allowed = addon.desc.allowed;
-
-    if (!isAllowed(allowed)) continue;
-
-    let enabledClass = window.enabledAddons[name]?" active":"";
-
-    let addonHTML = `
-    <div class="unimarklet grid-item">
-      <button class="unimarklet grid-toggle${enabledClass}"> </button>
-      <div class="unimarklet grid-name">${name}</div>
-      <div class="unimarklet grid-desc">${desc}</div>
-    </div>
-    `;
-    addonHTML = createElemFromText(addonHTML, grid);
-
-    let toggle = addonHTML.getElementsByClassName("grid-toggle")[0];
-    addonHTML.addEventListener("click", e => {
-      addon.toggle();
-      toggle.classList.toggle("active", addon.enabled);
-    });
-    setInterval(()=>{toggle.classList.toggle("active", addon.enabled)}, 100);
+  grid.replaceChildren();
+  for (let i in tempAddons) {
+    createAddonElem(tempAddons[i], i, grid);
   }
 }, ()=>{
 
@@ -374,6 +393,46 @@ let mainAddon = new Addon({
 mainAddon.enable();
 
 
+/*
+This function takes an addon and creates and appends an element to specfied parent
+*/
+function createAddonElem(addon, i, parent) {
+  let isMenu = !!addon.addons;
+
+  let name = addon.desc.name;
+  let desc = addon.desc.desc;
+  let allowed = addon.desc.allowed;
+
+  if (!isAllowed(allowed)) return;
+
+  let enabledClass = window.enabledAddons[name]?" active":"";
+  let toggleText = !isMenu?`<button class="unimarklet grid-toggle${enabledClass}"> </button>`:`<button class="unimarklet grid-enter">></button>`;
+  let arrowText = isMenu?`<div class="unimarklet grid-enter">></div>`:"";
+
+  let addonHTML = `
+  <div class="unimarklet grid-item">
+    ${toggleText}
+    <div class="unimarklet grid-name">${name}</div>
+    <div class="unimarklet grid-desc">${desc}</div>
+  </div>
+  `;
+  addonHTML = createElemFromText(addonHTML, parent);
+
+  if (!isMenu) {
+    let toggle = addonHTML.getElementsByClassName("grid-toggle")[0];
+    addonHTML.addEventListener("click", e => {
+      addon.toggle();
+      toggle.classList.toggle("active", addon.enabled);
+    });
+    setInterval(()=>{toggle.classList.toggle("active", addon.enabled)}, 100);
+  } else {
+    addonHTML.addEventListener("click", e => {
+      mainAddon.addonPath.push(i);
+      mainAddon.disable();
+      mainAddon.enable();
+    });
+  }
+}
 
 
 /*
