@@ -90,15 +90,26 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 10000;
+      z-index: 1000000;
+      
+      animation: ichliebebananasomnomnomnomnom 2s infinite linear;
+    }
+
+    @keyframes ichliebebananasomnomnomnomnom {
+      0% {
+        backdrop-filter: hue-rotate(0deg);
+      }
+      100% {
+        backdrop-filter: hue-rotate(360deg);
+      }
     }
     `);
-    rgbAddon.deg = 0;
+    /*rgbAddon.deg = 0;
 
     rgbAddon.interval = setInterval(()=>{    
       allHTML.style.backdropFilter = "hue-rotate("+rgbAddon.deg+"deg)";    
       rgbAddon.deg+=5;
-    }, 10);
+    }, 10);*/
   },
   () => {
     clearInterval(rgbAddon.interval);
