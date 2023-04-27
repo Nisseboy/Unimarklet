@@ -317,14 +317,40 @@ let mainAddon = new Addon({
     top: 0;
 
     border-radius: 0 0 1rem 1rem;
-    border: 2px solid gray;
-    border-top: none;
-
-    background: hsl(240, 2%, 12%);
     
     z-index: 9999;
     left: 50%;
     translate: -50%;
+
+    overflow: hidden;
+  }
+  .unimarklet.main::before {
+    content: "";
+    background-image: conic-gradient(yellow, orange, red, purple, blue, green, yellow);
+    position: absolute;
+    inset: -100%;
+
+    animation: spin 5s linear infinite;
+    z-index: -2;
+  }
+  .unimarklet.main::after {
+    content: "";
+    background: hsl(240, 2%, 12%);
+    position: absolute;
+    inset: 0.2rem;
+    top: 0;
+    border-radius: inherit;
+
+    z-index: -1;
+  }
+
+  @keyframes spin {
+    0% {
+      rotate: 0deg;
+    }
+    100% {
+      rotate: 360deg;
+    }
   }
 
   .unimarklet {
