@@ -81,7 +81,7 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
   (addHTML, addCSS) => {
     let allHTML = addHTML(`
     <div class="rgb-overlay"></div>
-    `);
+    `); 
     let allCSS = addCSS(`
     .rgb-overlay {
       position: fixed;
