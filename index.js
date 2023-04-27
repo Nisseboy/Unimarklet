@@ -335,7 +335,7 @@ let mainAddon = new Addon({
   }
 
   .unimarklet.addon-grid {
-    width: calc(100% - 5rem);
+    width: calc(100% - 2rem);
     padding-bottom: 1rem;
     margin: auto;
     margin-top: 0.5rem;
