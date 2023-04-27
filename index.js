@@ -242,6 +242,30 @@ let reverseTextAddon = window.enabledAddons["Reverse Text"] || new Addon(
 );
 addons.push(reverseTextAddon);
 
+let erikAddon = window.enabledAddons["Erik Mode"] || new Addon(
+  {
+    name: "Erik Mode",
+    desc: "Enables Erik mode. (Sound on)",
+    allowed: "*",
+    permanent: false,
+  },
+  (addHTML, addCSS) => {
+    let elem = addHTML(`<audio src="https://notification-sounds.com/soundsfiles/Goat-noise.mp3"></audio>`);
+
+    erikAddon.func = () => {
+      elem.currentTime = 0;
+      elem.play();
+    }
+    erikAddon.func();
+
+    document.addEventListener("keydown", erikAddon.func);
+  },
+  ()=>{
+    document.removeEventListener("keydown", erikAddon.func);
+  }
+);
+addons.push(erikAddon);
+
 
 
 
@@ -357,7 +381,6 @@ let mainAddon = new Addon({
 
     border: 1px solid gray;
     border-radius: 0.2rem;
-
     cursor: pointer;
   }
   `;
@@ -379,8 +402,6 @@ let mainAddon = new Addon({
     let path = mainAddon.addonPath[i];
     tempAddons = tempAddons[path].addons;
   }
-
-  console.log(tempAddons);
 
   let grid = mainHTML.getElementsByClassName("addon-grid")[0];
   grid.replaceChildren();
