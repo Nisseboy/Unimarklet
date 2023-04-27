@@ -347,6 +347,7 @@ let mainAddon = new Addon({
     grid-template-columns: 1rem auto;
 
     border-top: 1px dotted gray;
+    cursor: pointer;
 
     position: relative;
   }
