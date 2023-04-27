@@ -310,7 +310,6 @@ let mainAddon = new Addon({
   `;
 
   let mainCSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@500&display=swap');
   .unimarklet.main {
 
     width: 50rem;
@@ -330,7 +329,7 @@ let mainAddon = new Addon({
 
   .unimarklet {
     box-sizing: border-box;
-    font-family: 'Lexend', sans-serif;
+    font-family: sans-serif;
     color: white;
     font-size: 1rem;
   }
