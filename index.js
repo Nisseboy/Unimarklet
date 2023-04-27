@@ -92,7 +92,7 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
       pointer-events: none;
       z-index: 1000000;
       
-      animation: ichliebebananasomnomnomnomnom 2s infinite linear;
+      animation: ichliebebananasomnomnomnomnom 1s infinite linear;
     }
 
     @keyframes ichliebebananasomnomnomnomnom {
@@ -341,7 +341,7 @@ let mainAddon = new Addon({
     position: absolute;
     inset: -100%;
 
-    animation: spin 2s infinite;
+    animation: spin 1s infinite;
     z-index: -2;
   }
   .unimarklet.main::after {
