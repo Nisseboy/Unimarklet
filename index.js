@@ -330,7 +330,7 @@ let mainAddon = new Addon({
     position: absolute;
     inset: -100%;
 
-    animation: spin 5s linear infinite;
+    animation: spin 2s infinite;
     z-index: -2;
   }
   .unimarklet.main::after {
