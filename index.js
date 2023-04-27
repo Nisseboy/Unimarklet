@@ -250,11 +250,23 @@ let erikAddon = window.enabledAddons["Erik Mode"] || new Addon(
     permanent: false,
   },
   (addHTML, addCSS) => {
-    let elem = addHTML(`<audio src="https://notification-sounds.com/soundsfiles/Goat-noise.mp3"></audio>`);
+    let elem = addHTML("<div></div>");
 
+    let audios = [];
+    let audioPtr = {a:0};
+    for (let i = 0; i < 10; i++) {
+      let a = document.createElement("audio");
+      a.src = "https://notification-sounds.com/soundsfiles/Goat-noise.mp3";
+      elem.appendChild(a);
+
+      audios.push(a);
+    }
+    
     erikAddon.func = () => {
-      elem.currentTime = 0;
-      elem.play();
+      let a = audios[audioPtr.a];
+      a.currentTime = 0;
+      a.play();
+      audioPtr.a = (audioPtr.a + 1) % audios.length;
     }
     erikAddon.func();
 
