@@ -306,7 +306,7 @@ let cookieMonsterAddon = window.enabledAddons["Cookie Monster"] || new Addon(
     permanent: true,
   },
   (addHTML, addCSS) => {
-
+    Game.LoadMod("https://cookiemonsterteam.github.io/CookieMonster/dist/CookieMonster.js");
   },
   () => {
     
