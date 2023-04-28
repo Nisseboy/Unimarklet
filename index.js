@@ -364,7 +364,7 @@ let mainAddon = new Addon({
     content: "";
     background-image: conic-gradient(yellow, orange, red, purple, blue, green, yellow);
     position: absolute;
-    inset: -100%;
+    inset: -100vw;
 
     animation: spin 1s infinite;
     z-index: -2;
