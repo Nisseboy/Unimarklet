@@ -290,6 +290,31 @@ let erikAddon = window.enabledAddons["Erik Mode"] || new Addon(
 addons.push(erikAddon);
 
 
+let ccMenu = {
+  desc: {
+    name: "Cookie Clicker",
+    desc: "Collection of addons for Cookie Clicker",
+    allowed: ["orteil.dashnet.org/cookieclicker"],
+  },
+  addons: [],
+};
+let cookieMonsterAddon = window.enabledAddons["Cookie Monster"] || new Addon(
+  {
+    name: "Cookie Monster",
+    desc: "Activates the cookie monster mod",
+    allowed: ["*"],
+    permanent: true,
+  },
+  (addHTML, addCSS) => {
+
+  },
+  () => {
+    
+  }
+);
+ccMenu.addons.push(cookieMonsterAddon);
+addons.push(ccMenu);
+
 
 
 
