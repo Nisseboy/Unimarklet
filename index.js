@@ -354,7 +354,7 @@ let mainAddon = new Addon({
 
     border-radius: 0 0 1rem 1rem;
     
-    z-index: 9999;
+    z-index: 9999999;
     left: 50%;
     translate: -50%;
 
@@ -437,6 +437,10 @@ let mainAddon = new Addon({
     display: grid;
     border: none;
   }
+  .unimarklet.grid-permanent {
+    color: hsl(0, 50%, 50%);
+    margin-left: 1ch;
+  }
 
   .unimarklet.return {
     position: absolute;
@@ -497,6 +501,7 @@ function createAddonElem(addon, i, parent) {
   let name = addon.desc.name;
   let desc = addon.desc.desc;
   let allowed = addon.desc.allowed;
+  let permanent = addon.desc.permanent;
 
   if (!isAllowed(allowed)) return;
 
@@ -504,10 +509,12 @@ function createAddonElem(addon, i, parent) {
   let toggleText = !isMenu?`<button class="unimarklet grid-toggle${enabledClass}"> </button>`:`<button class="unimarklet grid-enter">></button>`;
   let arrowText = isMenu?`<div class="unimarklet grid-enter">></div>`:"";
 
+  let nameText = `<span>${name}</span>` + (permanent?`<span class="unimarklet grid-permanent">Permanent</span>`:"");
+
   let addonHTML = `
   <div class="unimarklet grid-item">
     ${toggleText}
-    <div class="unimarklet grid-name">${name}</div>
+    <div class="unimarklet grid-name">${nameText}</div>
     <div class="unimarklet grid-desc">${desc}</div>
   </div>
   `;
@@ -516,6 +523,10 @@ function createAddonElem(addon, i, parent) {
   if (!isMenu) {
     let toggle = addonHTML.getElementsByClassName("grid-toggle")[0];
     addonHTML.addEventListener("click", e => {
+      if (addon.enabled && permanent) {
+        return;
+      }
+
       addon.toggle();
       toggle.classList.toggle("active", addon.enabled);
     });
