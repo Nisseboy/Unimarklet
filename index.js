@@ -400,7 +400,7 @@ let mainAddon = new Addon({
     display: grid;
     gap: 0 0.5rem;
     padding: 0.5rem;
-    grid-template-columns: 2.4rem 1rem auto;
+    grid-template-columns: 1rem auto;
     grid-template-rows: 1.2rem 1.2rem;
 
     border-top: 1px dotted gray;
@@ -419,7 +419,7 @@ let mainAddon = new Addon({
     place-self: center;
   }
   .unimarklet.grid-desc {
-    grid-column: 2 / 4;
+    grid-column: 1 / 3;
     color: rgb(255 255 255 / 0.7);
   }
   .unimarklet.grid-toggle.active {
@@ -512,7 +512,6 @@ function createAddonElem(addon, i, parent) {
 
   let addonHTML = `
   <div class="unimarklet grid-item">
-    <img src="https://4kwallpapers.com/images/walls/thumbs_3t/7732.png" class="unimarklet grid-img">
     ${toggleText}
     <div class="unimarklet grid-name">${nameText}</div>
     <div class="unimarklet grid-desc">${desc}</div>
