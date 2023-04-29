@@ -104,15 +104,9 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
       }
     }
     `);
-    /*rgbAddon.deg = 0;
-
-    rgbAddon.interval = setInterval(()=>{    
-      allHTML.style.backdropFilter = "hue-rotate("+rgbAddon.deg+"deg)";    
-      rgbAddon.deg+=5;
-    }, 10);*/
   },
   () => {
-    clearInterval(rgbAddon.interval);
+    
   }
 );
 addons.push(rgbAddon);
