@@ -90,7 +90,7 @@ let rgbAddon = window.enabledAddons["Party Time"] || new Addon(
       width: 100vw;
       height: 100vh;
       pointer-events: none;
-      z-index: 1000000;
+      z-index: 99999999;
       
       animation: ichliebebananasomnomnomnomnom 1s infinite linear;
     }
@@ -255,7 +255,7 @@ let erikAddon = window.enabledAddons["Erik Mode"] || new Addon(
     permanent: false,
   },
   (addHTML, addCSS) => {
-    let elem = addHTML("<div></div>");
+    let elem = addHTML(`<div style="position: absolute"></div>`);
 
     let audios = [];
     let audioPtr = {a:0};
@@ -384,7 +384,6 @@ let mainAddon = new Addon({
   }
 
   .unimarklet {
-    box-sizing: border-box;
     font-family: sans-serif;
     color: white;
     font-size: 1rem;
@@ -397,10 +396,12 @@ let mainAddon = new Addon({
     margin-top: 0.5rem;
   }
   .unimarklet.grid-item {
+    height: 2.4rem;
     display: grid;
     gap: 0 0.5rem;
     padding: 0.5rem;
-    grid-template-columns: 1rem auto;
+    grid-template-columns: 2.4rem 1rem auto;
+    grid-template-rows: 1.2rem 1.2rem;
 
     border-top: 1px dotted gray;
     cursor: pointer;
@@ -418,8 +419,7 @@ let mainAddon = new Addon({
     place-self: center;
   }
   .unimarklet.grid-desc {
-    grid-column-start: 1;
-    grid-column-end: 3;
+    grid-column: 2 / 4;
     color: rgb(255 255 255 / 0.7);
   }
   .unimarklet.grid-toggle.active {
@@ -434,6 +434,11 @@ let mainAddon = new Addon({
   .unimarklet.grid-permanent {
     color: hsl(0, 50%, 50%);
     margin-left: 1ch;
+  }
+  .unimarklet.grid-img {
+    grid-row: 1 / 3;
+    height: 100%;
+    aspect-ratio: 1 / 1;
   }
 
   .unimarklet.return {
@@ -507,6 +512,7 @@ function createAddonElem(addon, i, parent) {
 
   let addonHTML = `
   <div class="unimarklet grid-item">
+    <img src="https://4kwallpapers.com/images/walls/thumbs_3t/7732.png" class="unimarklet grid-img">
     ${toggleText}
     <div class="unimarklet grid-name">${nameText}</div>
     <div class="unimarklet grid-desc">${desc}</div>
