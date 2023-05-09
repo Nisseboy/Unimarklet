@@ -396,7 +396,6 @@ let mainAddon = new Addon({
     margin-top: 0.5rem;
   }
   .unimarklet.grid-item {
-    height: 2.4rem;
     display: grid;
     gap: 0 0.5rem;
     padding: 0.5rem;
