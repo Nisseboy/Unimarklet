@@ -63,6 +63,47 @@ class Addon {
   }
 }
 
+function createGameIframe(name, url) {
+  let addon = window.enabledAddons[name] || new Addon(
+    {
+      name: name,
+      desc: `Creates a hidden iframe with ${name}, press § to show.`,
+      allowed: ["*"],
+      permanent: false,
+    },
+    (addHTML, addCSS) => {
+      let className = name.split(" ").join("-");
+      let allHTML = `
+      <iframe class="${className}" src="${url}"></iframe>
+      `;
+      let allCSS = `
+      .${className} {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 0;
+        height: 0;
+      }
+      `;
+      allHTML = addHTML(allHTML);
+      addCSS(allCSS);
+      
+      addon.handler = e => {
+        if (e.key == "§") {
+          allHTML.requestFullscreen();
+        }
+      }
+
+      document.addEventListener("keydown", addon.handler);
+    },
+    () => {
+      document.removeEventListener("keydown", addon.handler);
+    }
+  );
+
+  return addon;
+}
+
 
 
 
@@ -116,45 +157,12 @@ let gamesMenu = {
     name: "Games",
     desc: "Collection of games",
     allowed: ["*"],
+    radio: true,
   },
   addons: [],
 };
-let subwaySurfersAddon = window.enabledAddons["Subway Surfers"] || new Addon(
-  {
-    name: "Subway Surfers",
-    desc: "Creates a hidden iframe with Subway Surfers, press § to show.",
-    allowed: ["*"],
-    permanent: false,
-  },
-  (addHTML, addCSS) => {
-    let allHTML = `
-    <iframe class="subway-surfers" src="https://subway-surfer-monaco.nugeshinia.repl.co/"></iframe>
-    `;
-    let allCSS = `
-    .subway-surfers {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 0;
-      height: 0;
-    }
-    `;
-    allHTML = addHTML(allHTML);
-    addCSS(allCSS);
-    
-    window.subwaySurfersHandler = e => {
-      if (e.key == "§") {
-        allHTML.requestFullscreen();
-      }
-    }
-
-    document.addEventListener("keydown", window.subwaySurfersHandler);
-  },
-  () => {
-    document.removeEventListener("keydown", window.subwaySurfersHandler);
-  }
-);
-gamesMenu.addons.push(subwaySurfersAddon);
+gamesMenu.addons.push(createGameIframe("Subway Surfers", "https://subway-surfer-monaco.nugeshinia.repl.co/"));
+gamesMenu.addons.push(createGameIframe("Time Shooter", "https://timeshooter.application08.repl.co/"));
 addons.push(gamesMenu);
 
 let fixSchoolsoftAddon = window.enabledAddons["Fix Schoolsoft"] || new Addon(
@@ -417,6 +425,9 @@ let mainAddon = new Addon({
     border: 1px solid gray;
     place-self: center;
   }
+  .unimarklet.addon-grid.radio .grid-toggle {
+    border-radius: 50%;
+  }
   .unimarklet.grid-desc {
     grid-column: 1 / 3;
     color: rgb(255 255 255 / 0.7);
@@ -473,16 +484,20 @@ let mainAddon = new Addon({
   });
 
   let tempAddons = addons;
-  
+  let pAddon = mainAddon;
   for (let i = 0; i < mainAddon.addonPath.length; i++) {
     let path = mainAddon.addonPath[i];
+    pAddon = tempAddons[path];
     tempAddons = tempAddons[path].addons;
   }
+  
+  let desc = pAddon.desc;
+  mainHTML.getElementsByClassName("addon-grid")[0].classList.toggle("radio", !!desc.radio);
 
   let grid = mainHTML.getElementsByClassName("addon-grid")[0];
   grid.replaceChildren();
   for (let i in tempAddons) {
-    createAddonElem(tempAddons[i], i, grid);
+    createAddonElem(tempAddons[i], i, grid, pAddon);
   }
 }, ()=>{
 
@@ -493,8 +508,9 @@ mainAddon.enable();
 /*
 This function takes an addon and creates and appends an element to specfied parent
 */
-function createAddonElem(addon, i, parent) {
+function createAddonElem(addon, i, parent, parentAddon) {
   let isMenu = !!addon.addons;
+  let isRadio = parentAddon.desc.radio;
 
   let name = addon.desc.name;
   let desc = addon.desc.desc;
@@ -527,6 +543,17 @@ function createAddonElem(addon, i, parent) {
 
       addon.toggle();
       toggle.classList.toggle("active", addon.enabled);
+
+      if (addon.enabled && isRadio) {
+        for (let i of parentAddon.addons) {
+          if (i.enabled && i != addon) {
+            i.disable();
+          }
+        }
+
+        mainAddon.disable();
+        mainAddon.enable();
+      }
     });
     setInterval(()=>{toggle.classList.toggle("active", addon.enabled)}, 100);
   } else {
