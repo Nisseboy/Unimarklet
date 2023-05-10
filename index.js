@@ -67,7 +67,7 @@ function createGameIframe(name, url) {
   let addon = window.enabledAddons[name] || new Addon(
     {
       name: name,
-      desc: `Creates a hidden iframe with ${name}, press § to show.`,
+      desc: `Creates a window of ${name}, press § to show.`,
       allowed: ["*"],
       permanent: false,
     },
