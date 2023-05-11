@@ -269,7 +269,7 @@ let erikAddon = window.enabledAddons["Erik Mode"] || new Addon(
 
     let audios = [];
     let audioPtr = {a:0};
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) {
       let a = document.createElement("audio");
       a.src = "https://notification-sounds.com/soundsfiles/Goat-noise.mp3";
       elem.appendChild(a);
