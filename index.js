@@ -163,6 +163,7 @@ let gamesMenu = {
 };
 gamesMenu.addons.push(createGameIframe("Subway Surfers", "https://subway-surfer-monaco.nugeshinia.repl.co/"));
 gamesMenu.addons.push(createGameIframe("Time Shooter", "https://timeshooter.application08.repl.co/"));
+gamesMenu.addons.push(createGameIframe("Getting Over It", "https://scratch.mit.edu/projects/389464290/embed/"));
 gamesMenu.addons.push(createGameIframe("Recoil", "https://sipragio06.github.io/recoil/"));
 addons.push(gamesMenu);
 
