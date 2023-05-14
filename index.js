@@ -376,14 +376,12 @@ function openEditor(addon) {
       <h1>Editing ${addon.desc.name}</h1>
     </div>  
     <textarea id="code-mirror"></textarea>
-    <label for="editor-description">Description:</label>
-    <textarea id="editor-description">${addon.desc.desc}</textarea>
   </div>`);
 
   createStyles(`
   .editor {
     width: 60rem;
-    height: 60rem;
+    height: 50rem;
 
     position: absolute;
     top: 50%;
@@ -401,11 +399,14 @@ function openEditor(addon) {
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: 1rem;
+  }
+  .editor * {
+    font-size: inherit !important;
   }
   .editor-header {
     width: calc(100% - 4rem);
     height: 2rem;
-    font-size: 1rem;
 
     background: #373832;
     color: white;
@@ -415,38 +416,18 @@ function openEditor(addon) {
     padding: 0 2rem 0 2rem;
   }
   .editor-header h1 {
-    font-size: inherit;
     margin: 0;
   }
   .CodeMirror {
     width: calc(100% - 4rem);
     border: 1px solid white;
 
-    height: 45rem;
+    height: 44rem;
 
     border-radius: 0.5rem;
 
     margin-top: 2rem;
     margin-bottom: 1rem;
-  }
-  #editor-description {
-    width: calc(100% - 4rem);
-    height: 6rem;
-
-    resize: none;
-
-    border: 1px solid white;
-    border-radius: 0.5rem;
-    background: none;
-    color: white;
-
-    padding: 0.25rem;
-
-    outline: none;
-  }
-  label[for="editor-description"] {
-    width: calc(100% - 4rem);
-    color: white;
   }
   `);
   
