@@ -321,108 +321,145 @@ ccMenu.addons.push(cookieMonsterAddon);
 addons.push(ccMenu);
 
 
+let loadedCodeMirror = false;
+function openEditor(addon) {
+  if (!loadedCodeMirror) {
+    createElemFromText(`
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+    `, document.head);
 
-let editorAddon = window.enabledAddons["Editor Addon"] || new Addon(
-  {
-    name: "Editor Addon",
-    desc: "",
-    allowed: "*",
-    permanent: false,
-  },
-  (addHTML, addCSS, ...args) => {
-    if (!editorAddon.addedScripts) {
-      createElemFromText(`
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
-      `, document.head);
+    function loadScript(url, async = false) {
+      let script = document.createElement("script");
+      script.setAttribute("src", url);
+      script.setAttribute("async", async);
+      document.head.insertBefore(script, document.head.firstElementChild);
+    }
 
-      function loadScript(url) {
-        let script = document.createElement("script");
-        script.setAttribute("src", url);
-        script.setAttribute("async", "false");
-        document.head.insertBefore(script, document.head.firstElementChild);
-      }
-
-      loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js");
-      loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js");
-
+    function waitFor(checkFunc, doneFunc, errorFunc) {
       loops = 0;
       setTimeout(main, 10);
       function main() {
-        if (typeof CodeMirror == "undefined") {
+        if (!checkFunc()) {
           if (loops < 50) {
             setTimeout(main, 100);
           } else {
-            alert("something went wrong with CodeMirror, please try again");
+            errorFunc();
           }
           loops++;
   
           return;
         }
-        editorAddon.addedScripts = true;
-        editorAddon.disable();
-        editorAddon.enable(...args);
+        doneFunc();
       }
-      return;
     }
 
-    
-    let elem = addHTML(`
-    <div class="editor">
-      <div class="editor-header">
-        <h1>Editing ${args[0]}</h1>
-      </div>  
-      <textarea id="code-mirror"></textarea>
-    </div>`);
+    loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js");
 
-    addCSS(`
-    .editor {
-      width: 60rem;
-      height: 50rem;
-
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-
-      background-color: #272822;
-
-      z-index: 10000000;
-    }
-    .editor-header {
-      width: 100%;
-      height: 2rem;
-      font-size: 1rem;
-
-      background: #373832;
-    }
-    .editor-header h1 {
-      font-size: inherit;
-      margin: 0;
-    }
-    .CodeMirror {
-      position: absolute;
-      inset: 0;
-      margin: 4rem 2rem 2rem 2rem;
-
-      border: 2px solid white;
-    }
-    `);
-    
-    let editor = CodeMirror.fromTextArea(document.getElementById("code-mirror"), {
-      lineNumbers: true,
-      mode: "text/javascript",
-      theme: "monokai",
+    waitFor(() => { return typeof CodeMirror != "undefined"; }, () => {
+      loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js");
+      waitFor(() => {return CodeMirror.modes.javascript != undefined }, () => {
+        loadedCodeMirror = true;
+        openEditor(addon);
+      }, () => {
+        alert("Syntax highlighting for javascript couldn't load, please restart editor");
+      });
+    }, () => {
+      alert("CodeMirror couldn't load, please restart editor");
     });
-  },
-  ()=>{
-    
+    return;
   }
-);
+  
+  let elem = createElemFromText(`
+  <div class="editor">
+    <div class="editor-header">
+      <h1>Editing ${addon.desc.name}</h1>
+    </div>  
+    <textarea id="code-mirror"></textarea>
+    <label for="editor-description">Description:</label>
+    <textarea id="editor-description">${addon.desc.desc}</textarea>
+  </div>`);
+
+  createStyles(`
+  .editor {
+    width: 60rem;
+    height: 60rem;
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    background-color: #272822;
+
+    z-index: 10000000;
+
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 4px solid #373832;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .editor-header {
+    width: calc(100% - 4rem);
+    height: 2rem;
+    font-size: 1rem;
+
+    background: #373832;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    padding: 0 2rem 0 2rem;
+  }
+  .editor-header h1 {
+    font-size: inherit;
+    margin: 0;
+  }
+  .CodeMirror {
+    width: calc(100% - 4rem);
+    border: 1px solid white;
+
+    height: 45rem;
+
+    border-radius: 0.5rem;
+
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+  }
+  #editor-description {
+    width: calc(100% - 4rem);
+    height: 6rem;
+
+    resize: none;
+
+    border: 1px solid white;
+    border-radius: 0.5rem;
+    background: none;
+    color: white;
+
+    padding: 0.25rem;
+
+    outline: none;
+  }
+  label[for="editor-description"] {
+    width: calc(100% - 4rem);
+    color: white;
+  }
+  `);
+  
+  let editor = CodeMirror.fromTextArea(document.getElementById("code-mirror"), {
+    lineNumbers: true,
+    mode: "text/javascript",
+    theme: "monokai",
+  });
+}
 
 
 
-//editorAddon.enable();
+//openEditor(rgbAddon);
 
 
 
