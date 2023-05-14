@@ -27,11 +27,12 @@ class Addon {
     }
   }
 
-  enable() {
+  enable(...args) {
     let temp = this;
     this.enableFn(
       (text)=>{let elem = createElemFromText(text); temp.addedHTML.push(elem); return elem;}, 
-      (text)=>{let elem = createStyles(text); temp.addedCSS.push(elem); return elem;}
+      (text)=>{let elem = createStyles(text); temp.addedCSS.push(elem); return elem;},
+      ...args
     );
 
     this.enabled = true;
@@ -39,8 +40,8 @@ class Addon {
     window.enabledAddons[this.desc.name] = this;
   }
 
-  disable() {
-    this.disableFn();
+  disable(...args) {
+    this.disableFn(...args);
     
     this.addedHTML.forEach(elem => {
       elem.remove();
@@ -321,11 +322,107 @@ addons.push(ccMenu);
 
 
 
+let editorAddon = window.enabledAddons["Editor Addon"] || new Addon(
+  {
+    name: "Editor Addon",
+    desc: "",
+    allowed: "*",
+    permanent: false,
+  },
+  (addHTML, addCSS, ...args) => {
+    if (!editorAddon.addedScripts) {
+      createElemFromText(`
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+      `, document.head);
+
+      function loadScript(url) {
+        let script = document.createElement("script");
+        script.setAttribute("src", url);
+        script.setAttribute("async", "false");
+        document.head.insertBefore(script, document.head.firstElementChild);
+      }
+
+      loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js");
+      loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js");
+
+      loops = 0;
+      setTimeout(main, 10);
+      function main() {
+        if (typeof CodeMirror == "undefined") {
+          if (loops < 50) {
+            setTimeout(main, 100);
+          } else {
+            alert("something went wrong with CodeMirror, please try again");
+          }
+          loops++;
+  
+          return;
+        }
+        editorAddon.addedScripts = true;
+        editorAddon.disable();
+        editorAddon.enable(...args);
+      }
+      return;
+    }
+
+    
+    let elem = addHTML(`
+    <div class="editor">
+      <div class="editor-header">
+        <h1>Editing ${args[0]}</h1>
+      </div>  
+      <textarea id="code-mirror"></textarea>
+    </div>`);
+
+    addCSS(`
+    .editor {
+      width: 60rem;
+      height: 50rem;
+
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+
+      background-color: #272822;
+
+      z-index: 10000000;
+    }
+    .editor-header {
+      width: 100%;
+      height: 2rem;
+      font-size: 1rem;
+
+      background: #373832;
+    }
+    .editor-header h1 {
+      font-size: inherit;
+      margin: 0;
+    }
+    .CodeMirror {
+      position: absolute;
+      inset: 0;
+      margin: 4rem 2rem 2rem 2rem;
+
+      border: 2px solid white;
+    }
+    `);
+    
+    let editor = CodeMirror.fromTextArea(document.getElementById("code-mirror"), {
+      lineNumbers: true,
+      mode: "text/javascript",
+      theme: "monokai",
+    });
+  },
+  ()=>{
+    
+  }
+);
 
 
 
-
-
+//editorAddon.enable();
 
 
 
@@ -345,7 +442,7 @@ let mainAddon = new Addon({
   <div class="unimarklet main">
     ${returnText}
     <div class="unimarklet addon-grid"></div>
-    <button class="unimarklet delete">X</button>
+    <button class="unimarklet delete"></button>
   </div>
   `;
 
@@ -471,6 +568,30 @@ let mainAddon = new Addon({
     border: 1px solid gray;
     border-radius: 0.2rem;
     cursor: pointer;
+
+    width: 1.2rem;
+    height: 1.2rem;
+
+    display: grid;
+    place-items: center;
+  }
+  .unimarklet.delete::before {
+    content: "";
+    width: 90%;
+    height: 2px;
+    rotate: 45deg;
+    background-color: white;
+
+    position: absolute;
+  }
+  .unimarklet.delete::after {
+    content: "";
+    width: 90%;
+    height: 2px;
+    rotate: -45deg;
+    background-color: white;
+
+    position: absolute;
   }
   `;
   mainHTML = addHTML(mainHTML);
@@ -603,3 +724,4 @@ function isAllowed(criteria) {
 
 
 })();
+
