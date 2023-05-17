@@ -1,5 +1,9 @@
 
 javascript:(function(){
+    if (typeof source == "undefined") {
+        alert("Go here and change the bookmark to the text there: https://raw.githubusercontent.com/Nisseboy/Unimarklet/master/bookmarklet.js");
+        return;
+    }
 if (!window.enabledAddons) window.enabledAddons = {};
 /*
 This class is an addon
