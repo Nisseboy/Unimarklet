@@ -284,6 +284,359 @@ var a =  {
 }
 
 //new addon
+var a = {
+  desc: {
+    name: "Create Addons",
+    desc: "Change the source code of all addons and create new addons, changes are page specific.",
+    allowed: ["*"],
+    permanent: false,
+  },
+  init: async (addHTML, addCSS, editAddon, ...args) => {
+    if (!window.loadedCodeMirror) {
+      createElemFromText(`
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+      `, document.head);
+
+      let res = await Promise.all([
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldcode.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/brace-fold.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/indent-fold.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/javascript-hint.min.js").then(a=>a.text()),
+        fetch("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/selection/active-line.min.js").then(a=>a.text()),
+      ])
+
+      for (let i of res) {
+        eval(i);
+      }
+      window.loadedCodeMirror = true;
+    }
+
+
+    let addon = args[0] || {desc: {name: "Open an Addon or create a new one."}, source: "", dummy: true};
+
+    
+    let html = addHTML(`
+    <div class="editor">
+      <div class="editor-header">
+        <h1>Addon Editor</h1>
+        <button class="editor-close"></button>
+      </div>  
+      <div class="editor-page-title">Addons</div>
+      <div class="editor-page-title">${addon.desc.name}</div>
+      <div class="editor-sidebar"></div>
+      <textarea id="code-mirror"></textarea>
+      <div class="editor-footer">
+        <span class="material-symbols-outlined">add</span>
+      </div>
+      <div class="editor-footer">
+        <button class="editor-apply">Apply changes</button>
+      </div>
+    </div>`);
+
+    addCSS(`
+    .editor * {
+      font-size: inherit;
+    }
+    .editor {
+      --editor-main-bg: #272822;
+      --editor-header-bg: #373832;
+      --editor-sidebar-bg: #1f201b;
+
+      position: absolute;
+      inset: 2rem;
+
+      background-color: var(--editor-main-bg);
+
+      z-index: 10000000;
+
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 8px solid var(--editor-header-bg);
+      border-top: none;
+
+      display: grid;
+      grid-template-columns: 20rem 4fr;
+      grid-template-rows: 2rem 1.4rem 1fr 1.8rem;
+
+      font-size: 1rem;
+
+      font-family: monospace;
+    }
+
+
+    .editor-header {
+      grid-column: 1 / 3;
+
+      background: var(--editor-header-bg);
+      color: white;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      z-index: 1;
+    }
+    .editor-header h1 {
+      margin: 0;
+    }
+    .editor-close {
+      position: relative;
+
+      background: none;
+      border: none;
+      cursor: pointer;
+
+      width: 1.2rem;
+      height: 1.2rem;
+
+      display: grid;
+      place-items: center;
+    }
+    .editor-close::before,
+    .editor-close::after {
+      content: "";
+      width: 90%;
+      height: 3px;
+      border-radius: 1rem;
+      background-color: red;
+
+      position: absolute;
+    }
+    .editor-close::before {
+      rotate: 45deg;
+    }
+    .editor-close::after {
+      rotate: -45deg;
+    }
+
+
+    .editor-page-title {
+      background-color: var(--editor-sidebar-bg);
+      color: white;
+      padding-left: 1rem;
+      font-weight: 700;
+    }
+    .editor-page-title:nth-of-type(3) {
+      background-color: var(--editor-sidebar-bg);
+
+      box-shadow: 0 -0.6rem 0.5rem 1rem #00000077;
+      z-index: -1;
+    }
+
+
+    .editor-sidebar {
+      background-color: var(--editor-sidebar-bg);
+      border-top: 1px solid #fff2;
+    }
+    .editor-sidebar-item {
+      color: white;
+      width: 100%;
+      padding: 0.2rem 0 0.2rem calc(1rem + var(--depth) * 0.5rem);
+
+      box-sizing: border-box;
+
+      user-select: none;
+      cursor: pointer;
+
+      display: grid;
+      align-items: center;
+
+      position: relative;
+    }
+    .editor-sidebar-item::before {
+      content: "";
+      width: 1px;
+      height: 100%;
+
+      position: absolute;
+      left: calc(0.5rem + var(--depth) * 0.5rem);
+
+      background: #fff4;
+
+      opacity: var(--depth);
+    }
+    .editor-sidebar-item:hover {
+      background: #ffffff0c;
+    }
+
+
+    .CodeMirror {
+      height: unset !important;
+      grid-column: 2 / 3;
+      grid-row: 3 / 4;
+
+      z-index: -2;
+    }
+    .CodeMirror-hints {
+      z-index: 10000001;
+
+      background: #202018;
+      border: 1px solid black;
+    }
+    .CodeMirror-hint {
+      color: white;
+    }
+    li.CodeMirror-hint-active {
+      background: #fff2;
+    }
+
+
+    .editor-footer {
+      background-color: var(--editor-sidebar-bg);
+      display: flex;
+      align-items: center;
+      color: white;
+      font-size: 1.4rem;
+      padding-left: 0.4rem;
+      padding-right: 0.2rem;
+
+      user-select: none;
+    }
+    .editor-footer:nth-of-type(7) {
+      justify-content: end;
+    }
+    .editor-footer * {
+      cursor: pointer;
+    }
+    .editor-apply {
+      height: 80%;
+      padding: 0.4rem;
+      font-size: 1rem;
+
+      display: flex;
+      align-items: center;
+
+      background: #7878c6;
+      border: none;
+      border-radius: 0.4rem;
+      color: white;
+    }
+
+    
+    .editor-popup {
+      position: fixed;
+      top: 0;
+      left: 50%;
+
+      z-index: 10000001;
+
+      animation: from-top 0.2s forwards;
+
+      color: white;
+      background: #7878c6;
+
+      border-radius: 0.4rem;
+      padding: 0.2rem 0.6rem;
+    }
+    @keyframes from-top {
+      0% {
+        translate: -50% -100%;
+      }
+      100% {
+        translate: -50% 100%;
+      }
+    }
+    `);
+  
+    //Close Button
+    html.getElementsByClassName("editor-close")[0].addEventListener("click", e => {
+      editAddon.disable();
+    });
+    
+    let editor = CodeMirror.fromTextArea(document.getElementById("code-mirror"), {
+      lineNumbers: true,
+      mode: "text/javascript",
+      theme: "monokai",
+      readOnly:  addon.dummy?"nocursor":false,
+      tabSize: 2,
+      autofocus: true,
+      matchBrackets: true,
+      autoCloseBrackets: true, 
+      foldGutter: true,
+      gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+      hintOptions: {
+        hint: CodeMirror.hint.javascript,
+        completeSingle: false,
+      },
+      extraKeys: {
+        "Ctrl-Space": "autocomplete",
+      }
+    });
+    editor.on("inputRead", function(editor, input) {
+      addon.source = addon.path + editor.getValue();
+
+      if (input.text[0] === ";" || input.text[0] === " ") {
+        return;
+      }
+      editor.showHint({
+        hint: CodeMirror.hint.auto,
+      });
+    });
+    editor.setValue(addon.source);
+    editor.getDoc().clearHistory();
+
+
+    html.addEventListener("keydown", e => {
+      if (e.ctrlKey && e.key == "s") {
+        save();
+        e.preventDefault();
+      }
+    });
+    html.getElementsByClassName("editor-apply")[0].addEventListener("click", save);
+
+
+    function save() {
+      let elem = createElemFromText(`
+      <div class="editor-popup">Saved</div>
+      `);
+      setTimeout(()=>{elem.remove()}, 1000);
+
+
+      
+    }
+
+
+    function createSidebar(sidebar, addons, depth = 0) {
+      for (let i in addons) {
+        let addon = addons[i];
+        let isFolder = !!addon.addons;
+
+        let elem = createElemFromText(`
+        <div class="editor-sidebar-item" style="--depth: ${depth}">
+          ${addon.desc.name}
+        </div>
+        `, sidebar);
+
+        if (isFolder) {
+          createSidebar(sidebar, addon.addons, depth + 1);
+        }
+
+        elem.addEventListener("click", e => {
+          editAddon.disable();
+          editAddon.enable(addon);
+        });
+      }
+    }
+
+    let sidebar = html.getElementsByClassName("editor-sidebar")[0];
+    createSidebar(sidebar, addons);
+  },
+  destroy: (editAddon, ...args) => {
+
+  },
+};
+
+//new addon
 var a =  {
   desc: {
     name: "Main Addon",
@@ -350,7 +703,6 @@ var a =  {
     .unimarklet {
       font-family: sans-serif;
       color: white;
-      font-size: 1rem;
     }
 
     .unimarklet.addon-grid {
@@ -420,10 +772,8 @@ var a =  {
       right: 0;
       margin: 0.2rem;
 
-      background: red;
-
-      border: 1px solid gray;
-      border-radius: 0.2rem;
+      background: none;
+      border: none;
       cursor: pointer;
 
       width: 1.2rem;
@@ -432,23 +782,21 @@ var a =  {
       display: grid;
       place-items: center;
     }
-    .unimarklet.delete::before {
-      content: "";
-      width: 90%;
-      height: 2px;
-      rotate: 45deg;
-      background-color: white;
-
-      position: absolute;
-    }
+    .unimarklet.delete::before,
     .unimarklet.delete::after {
       content: "";
       width: 90%;
-      height: 2px;
-      rotate: -45deg;
-      background-color: white;
+      height: 3px;
+      border-radius: 1rem;
+      background-color: red;
 
       position: absolute;
+    }
+    .unimarklet.delete::before {
+      rotate: 45deg;
+    }
+    .unimarklet.delete::after {
+      rotate: -45deg;
     }
     `;
     mainHTML = addHTML(mainHTML);
@@ -484,22 +832,6 @@ var a =  {
   destroy: (addon, ...args) => {
 
   }
-};
-
-//new addon
-var a = {
-  desc: {
-    name: "Create Addons",
-    desc: "Change the source code of all addons and create new addons, changes are page specific.",
-    allowed: ["!*"],
-    permanent: false,
-  },
-  init: (addHTML, addCSS, addon, ...args) => {
-    
-  },
-  destroy: (addon, ...args) => {
-
-  },
 };
 
 //new addon
@@ -585,8 +917,6 @@ for (let i = 0; i < splitSource.length; i++) {
   text = splitText.join("\n")
 
   eval(text);
-
-  a.source = text;
   
   if (!a.addons) {
     a = createAddon(a);
@@ -607,6 +937,7 @@ for (let i = 0; i < splitSource.length; i++) {
   }
 
   a.source = text;
+  a.path = path;
   parent.push(a);
 }
 mainAddon.enable();
@@ -671,127 +1002,6 @@ function createAddonElem(addon, i, parent, parentAddon) {
     });
   }
 }
-
-
-let loadedCodeMirror = false;
-function openEditor(addon) {
-  if (!loadedCodeMirror) {
-    createElemFromText(`
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"/>
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/monokai.min.css">
-    `, document.head);
-
-    function loadScript(url, async = false) {
-      let script = document.createElement("script");
-      script.setAttribute("src", url);
-      script.setAttribute("async", async);
-      document.head.insertBefore(script, document.head.firstElementChild);
-    }
-
-    function waitFor(checkFunc, doneFunc, errorFunc) {
-      loops = 0;
-      setTimeout(main, 10);
-      function main() {
-        if (!checkFunc()) {
-          if (loops < 50) {
-            setTimeout(main, 100);
-          } else {
-            errorFunc();
-          }
-          loops++;
-  
-          return;
-        }
-        doneFunc();
-      }
-    }
-
-    loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js");
-
-    waitFor(() => { return typeof CodeMirror != "undefined"; }, () => {
-      loadScript("https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js");
-      waitFor(() => {return CodeMirror.modes.javascript != undefined }, () => {
-        loadedCodeMirror = true;
-        openEditor(addon);
-      }, () => {
-        alert("Syntax highlighting for javascript couldn't load, please restart editor");
-      });
-    }, () => {
-      alert("CodeMirror couldn't load, please restart editor");
-    });
-    return;
-  }
-  
-  let elem = createElemFromText(`
-  <div class="editor">
-    <div class="editor-header">
-      <h1>Editing ${addon.desc.name}</h1>
-    </div>  
-    <textarea id="code-mirror"></textarea>
-  </div>`);
-
-  createStyles(`
-  .editor {
-    width: 60rem;
-    height: 50rem;
-
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-
-    background-color: #272822;
-
-    z-index: 10000000;
-
-    border-radius: 1rem;
-    overflow: hidden;
-    border: 4px solid #373832;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 1rem;
-  }
-  .editor * {
-    font-size: inherit !important;
-  }
-  .editor-header {
-    width: calc(100% - 4rem);
-    height: 2rem;
-
-    background: #373832;
-    color: white;
-
-    display: flex;
-    align-items: center;
-    padding: 0 2rem 0 2rem;
-  }
-  .editor-header h1 {
-    margin: 0;
-  }
-  .CodeMirror {
-    width: calc(100% - 4rem);
-    border: 1px solid white;
-
-    height: 44rem;
-
-    border-radius: 0.5rem;
-
-    margin-top: 2rem;
-    margin-bottom: 1rem;
-  }
-  `);
-  
-  let editor = CodeMirror.fromTextArea(document.getElementById("code-mirror"), {
-    lineNumbers: true,
-    mode: "text/javascript",
-    theme: "monokai",
-  });
-  editor.setValue(addon.source);
-  editor.getDoc().clearHistory();
-}
-//openEditor(addons[0]);
 
 
 
