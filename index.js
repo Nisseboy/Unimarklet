@@ -927,7 +927,7 @@ for (let i = 0; i < splitSource.length; i++) {
 
   eval(text);
   
-  let path = a.path.split("/");
+  let path = a.desc.path.split("/");
 
   if (!a.addons) {
     a = createAddon(a);
@@ -948,7 +948,6 @@ for (let i = 0; i < splitSource.length; i++) {
   }
 
   a.source = text;
-  a.path = path;
   parent.push(a);
 }
 mainAddon.enable();
