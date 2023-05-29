@@ -1035,7 +1035,7 @@ function createStyles(text) {
 }
 
 /*
-Takes an allowed element ("*", "google.com") and returns true if the addon should be available
+Takes an allowed array ("*", "google.com") and returns true if the addon should be available
 */
 function isAllowed(criteria) {
   for (let i = 0; i < criteria.length; i++) {
