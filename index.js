@@ -931,10 +931,9 @@ for (let i = 0; i < splitSource.length; i++) {
   let parent = addons;
 
   for (let i in path) {
-    console.log(i, path);
-    if (i == 0) continue;
-
     let name = path[i];
+    if (name == "") continue;
+
     for (let i of parent) {
       if (i.desc.name.replaceAll("\r", "") == name.replaceAll("\r", "")) {
         parent = i.addons;
