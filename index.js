@@ -87,6 +87,7 @@ var a = {
     desc: "Makes the page gamer",
     allowed: ["*"],
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     let allHTML = addHTML(`
@@ -127,6 +128,7 @@ var a =  {
     desc: "Collection of games",
     allowed: ["*"],
     radio: true,
+    path: "",
   },
   addons: [],
 };
@@ -138,6 +140,7 @@ var a =  {
     desc: "Makes schoolsoft look a bit more like the old version.",
     allowed: ["schoolsoft.se"],
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     let allCSS = `
@@ -167,6 +170,7 @@ var a =  {
     desc: "Makes everything on the page editable.",
     allowed: ["*"],
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     addon.oldSpellCheck = document.body.spellcheck;
@@ -186,6 +190,7 @@ var a =  {
     desc: "Puts the page in a professional fullscreen mode, Escape to exit. This is not a toggle.",
     allowed: ["*"],
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     document.body.requestFullscreen({navigationUI: "hide"});
@@ -203,6 +208,7 @@ var a =  {
     desc: "Reverses all the words on the page",
     allowed: "*",
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     addon.elems = document.querySelectorAll("*");
@@ -228,6 +234,7 @@ var a =  {
     desc: "Enables Erik mode. (Sound on)",
     allowed: "*",
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     let elem = addHTML(`<div style="position: absolute"></div>`);
@@ -263,17 +270,19 @@ var a =  {
     name: "Cookie Clicker",
     desc: "Collection of addons for Cookie Clicker",
     allowed: ["orteil.dashnet.org/cookieclicker"],
+    path: "",
   },
   addons: [],
 };
 
-//new addon,Cookie Clicker
+//new addon
 var a =  {
   desc: {
     name: "Cookie Monster",
     desc: "Activates the cookie monster mod",
     allowed: ["*"],
     permanent: true,
+    path: "Cookie Clicker",
   },
   init: (addHTML, addCSS, addon, ...args) => {
     Game.LoadMod("https://cookiemonsterteam.github.io/CookieMonster/dist/CookieMonster.js");
@@ -290,6 +299,7 @@ var a = {
     desc: "Change the source code of all addons and create new addons, changes are page specific.",
     allowed: ["*"],
     permanent: false,
+    path: "",
   },
   init: async (addHTML, addCSS, editAddon, ...args) => {
     if (!window.loadedCodeMirror) {
@@ -643,6 +653,7 @@ var a =  {
     desc: "This addon manages all the other addons",
     allowed: ["*"],
     permanent: false,
+    path: "",
   },
   init: (addHTML, addCSS, addon, ...args)=>{
     if (!addon.addonPath) addon.addonPath = [];
@@ -839,7 +850,6 @@ var a =  {
 
 let splitSource = source.split("//new addon");
 splitSource.splice(0, 1);
-splitSource.splice(-2, 2);
 
 
 let gameSources = [
@@ -864,46 +874,46 @@ for (let i of gameSources) {
   let name = i.name;
   let url = i.url;
 
-  splitSource.push(`,Games
-  let name = "${name}";
-  let url = "${url}";
+  splitSource.push(`let name = "${name}";
+let url = "${url}";
 
-  var a = {
-    desc: {
-      name: name,
-      desc: \`Creates a window of \${name}, press § to show.\`,
-      allowed: ["*"],
-      permanent: false,
-    },
-    init: (addHTML, addCSS, addon, ...args) => {
-      let allHTML = \`
-      <iframe class="game-window" src="\${url}"></iframe>
-      \`;
-      let allCSS = \`
-      .game-window {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 0;
-        height: 0;
-      }
-      \`;
-      allHTML = addHTML(allHTML);
-      addCSS(allCSS);
-      
-      addon.handler = e => {
-        if (e.key == "§") {
-          allHTML.requestFullscreen();
-        }
-      }
-
-      document.addEventListener("keydown", addon.handler);
-    },
-    destroy: (addon, ...args) => {
-      document.removeEventListener("keydown", addon.handler);
+var a = {
+  desc: {
+    name: name,
+    desc: \`Creates a window of \${name}, press § to show.\`,
+    allowed: ["*"],
+    permanent: false,
+    path: "Games",
+  },
+  init: (addHTML, addCSS, addon, ...args) => {
+    let allHTML = \`
+    <iframe class="game-window" src="\${url}"></iframe>
+    \`;
+    let allCSS = \`
+    .game-window {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0;
+      height: 0;
     }
-  };
-  `)
+    \`;
+    allHTML = addHTML(allHTML);
+    addCSS(allCSS);
+    
+    addon.handler = e => {
+      if (e.key == "§") {
+        allHTML.requestFullscreen();
+      }
+    }
+
+    document.addEventListener("keydown", addon.handler);
+  },
+  destroy: (addon, ...args) => {
+    document.removeEventListener("keydown", addon.handler);
+  }
+};
+`);
 }
 
 for (let i = 0; i < splitSource.length; i++) {
@@ -913,21 +923,22 @@ for (let i = 0; i < splitSource.length; i++) {
   }
   
   let splitText = text.split("\n");
-  let path = splitText.splice(0, 1)[0];
   text = splitText.join("\n")
 
   eval(text);
   
+  let path = a.path.split("/");
+
   if (!a.addons) {
     a = createAddon(a);
   }
 
   let parent = addons;
 
-  for (let i in path.split(",")) {
+  for (let i in path) {
     if (i == 0) continue;
 
-    let name = path.split(",")[i];
+    let name = path[i];
     for (let i of parent) {
       if (i.desc.name.replaceAll("\r", "") == name.replaceAll("\r", "")) {
         parent = i.addons;
