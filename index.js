@@ -352,7 +352,7 @@ var a = {
       --editor-header-bg: #373832;
       --editor-sidebar-bg: #1f201b;
 
-      position: absolute;
+      position: fixed;
       inset: 2rem;
 
       background-color: var(--editor-main-bg);
