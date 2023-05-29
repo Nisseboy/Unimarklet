@@ -918,12 +918,6 @@ var a = {
 
 for (let i = 0; i < splitSource.length; i++) {
   let text = splitSource[i];
-  if (text[0] != ",") {
-    text = "\n" + text;
-  }
-  
-  let splitText = text.split("\n");
-  text = splitText.join("\n")
 
   eval(text);
   
