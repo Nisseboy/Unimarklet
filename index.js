@@ -850,6 +850,7 @@ var a =  {
 
 let splitSource = source.split("//new addon");
 splitSource.splice(0, 1);
+splitSource.splice(-2, 2);
 
 
 let gameSources = [
