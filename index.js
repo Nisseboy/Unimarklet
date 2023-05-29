@@ -921,8 +921,10 @@ var a = {
 
 for (let i = 0; i < splitSource.length; i++) {
   let text = splitSource[i];
+  text = text.split("\n");
   text.splice(0, 1);
   text.splice(-2, 2);
+  text = text.join("\n");
 
   eval(text);
   
