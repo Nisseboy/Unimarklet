@@ -875,7 +875,8 @@ for (let i of gameSources) {
   let name = i.name;
   let url = i.url;
 
-  splitSource.push(`let name = "${name}";
+  splitSource.push(`
+let name = "${name}";
 let url = "${url}";
 
 var a = {
@@ -914,11 +915,14 @@ var a = {
     document.removeEventListener("keydown", addon.handler);
   }
 };
+
 `);
 }
 
 for (let i = 0; i < splitSource.length; i++) {
   let text = splitSource[i];
+  text.splice(0, 1);
+  text.splice(-2, 2);
 
   eval(text);
   
