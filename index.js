@@ -297,7 +297,7 @@ var a = {
   desc: {
     name: "Create Addons",
     desc: "Change the source code of all addons and create new addons, changes are page specific.",
-    allowed: ["*"],
+    allowed: [""],
     permanent: false,
     path: "",
   },
