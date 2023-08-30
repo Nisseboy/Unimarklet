@@ -265,6 +265,28 @@ var a =  {
 };
 
 //new addon
+var a = {
+  desc: {
+    name: "Youtubeifier",
+    desc: "Edits all youtube links in a page to make them clickable",
+    allowed: ["*"],
+    permanent: true,
+    path: "",
+  },
+  init: (addHTML, addCSS, addon, ...args) => {
+    let elems = document.querySelectorAll("*[href*=\"watch?v=\"]");
+
+    for (let i = 0; i < elems.length; i++) {
+        let elem = elems[i];
+        elem.href = elem.href.replace("watch?v=", "embed/");
+    }
+  },
+  destroy: (addon, ...args) => {
+
+  },
+}
+
+//new addon
 var a =  {
   desc: {
     name: "Cookie Clicker",
