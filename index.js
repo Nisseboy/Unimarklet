@@ -892,6 +892,10 @@ let gameSources = [
     name: "Recoil",
     url: "https://sipragio06.github.io/recoil/"
   },
+  {
+    name: "Moto X3M",
+    url: "https://webglmath.github.io/moto-x3m/"
+  }
 ];
 for (let i of gameSources) {
   let name = i.name;
