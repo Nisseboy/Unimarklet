@@ -542,6 +542,10 @@ let gameSources = [
   {
     name: "Moto X3M",
     url: "https://webglmath.github.io/moto-x3m/"
+  },
+  {
+    name: "Minecraft",
+    url: "https://watchdocumentaries.com/wp-content/uploads/games/minecraft-classic/"
   }
 ];
 for (let i of gameSources) {
