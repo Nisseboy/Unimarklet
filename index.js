@@ -84,7 +84,7 @@ if (false) {
 var a = {
   desc: {
     name: "Party Time",
-    desc: "Makes the page gamer",
+    desc: "Makes the page ooh yea",
     allowed: ["*"],
     permanent: false,
     path: "",
